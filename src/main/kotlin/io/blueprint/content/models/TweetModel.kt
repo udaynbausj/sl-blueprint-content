@@ -13,7 +13,7 @@ class TweetModel {
     var text:String = ""
     var userId: Long = 0
     var clientType: Byte = 0
-    var parentTweetId: Long = 0
+    var parentTweetId: Long? = 0
     var regionId: Int = 0
     var status: Byte = 0
     var createdAt: Date? = null
