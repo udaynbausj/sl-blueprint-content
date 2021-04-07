@@ -2,6 +2,7 @@ package io.blueprint.content.core
 
 import io.blueprint.content.dto.TweetDto
 import io.blueprint.content.enums.TweetStatusEnum
+import io.blueprint.content.exceptions.TweetNotFoundException
 import io.blueprint.content.exceptions.ValidationException
 import io.blueprint.content.models.TweetModel
 import io.blueprint.content.repositories.TweetRepository
@@ -14,15 +15,14 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class TweetServiceImpl constructor(@Autowired var hashtagService: HashtagService,
-                                    @Autowired var tweetRepository: TweetRepository) : TweetService {
+class TweetServiceImpl constructor(@Autowired val tweetRepository: TweetRepository) : TweetService {
 
     override fun createTweet(tweetDto: TweetDto): TweetModel {
 
         if (!TweetUtils.validateTweetTextLength(tweetDto.text)) {
             throw ValidationException("Max length exceeded")
         }
-        hashtagService.saveHashTags(findHashTags(tweetDto.text))
+
         val tweetModel = buildTweetModel(tweetDto)
         return tweetRepository.save(tweetModel)
 
@@ -30,12 +30,14 @@ class TweetServiceImpl constructor(@Autowired var hashtagService: HashtagService
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    override fun updateTweet(): TweetModel {
-        TODO("Not yet implemented")
-    }
+    override fun deleteTweet(tweetId: Long): TweetModel {
+        val isEmpty = tweetRepository.findById(tweetId).isEmpty
 
-    override fun deleteTweet() {
-        TODO("Not yet implemented")
+        if (isEmpty) {
+            throw TweetNotFoundException("Tweet with given id is not present")
+        }
+
+        return tweetRepository.changeTweetStatus(tweetId)
     }
 
     fun findHashTags(text : String): List<String> {

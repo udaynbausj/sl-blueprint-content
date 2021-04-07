@@ -5,6 +5,5 @@ import io.blueprint.content.models.TweetModel
 
 interface TweetService {
     fun createTweet(tweetDto: TweetDto) : TweetModel
-    fun updateTweet() : TweetModel
-    fun deleteTweet()
+    fun deleteTweet(tweetId : Long) : TweetModel
 }

@@ -5,14 +5,11 @@ import io.blueprint.content.models.TweetModel
 import io.blueprint.content.services.TweetService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/tweet")
-class TweetController constructor(@Autowired var tweetService: TweetService) {
+class TweetController constructor(@Autowired val tweetService: TweetService) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -20,6 +17,12 @@ class TweetController constructor(@Autowired var tweetService: TweetService) {
     fun createTweet(@RequestBody tweetDto: TweetDto) : TweetModel {
         logger.info("request received with body : {} ",tweetDto.toString())
         return tweetService.createTweet(tweetDto)
+    }
+
+    @DeleteMapping("/{tweetId}")
+    fun deleteTweet(@PathVariable(name = "tweetId") tweetId : Long) : TweetModel {
+        logger.info("request to delete tweet with id : {} received",tweetId)
+        return tweetService.deleteTweet(tweetId)
     }
 
 }
