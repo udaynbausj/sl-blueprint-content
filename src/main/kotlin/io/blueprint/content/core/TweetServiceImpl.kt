@@ -6,7 +6,6 @@ import io.blueprint.content.exceptions.TweetNotFoundException
 import io.blueprint.content.exceptions.ValidationException
 import io.blueprint.content.models.TweetModel
 import io.blueprint.content.repositories.TweetRepository
-import io.blueprint.content.services.HashtagService
 import io.blueprint.content.services.TweetService
 import io.blueprint.content.utils.TweetUtils
 import org.slf4j.LoggerFactory
@@ -16,6 +15,9 @@ import java.util.*
 
 @Service
 class TweetServiceImpl constructor(@Autowired val tweetRepository: TweetRepository) : TweetService {
+
+
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun createTweet(tweetDto: TweetDto): TweetModel {
 
@@ -27,8 +29,6 @@ class TweetServiceImpl constructor(@Autowired val tweetRepository: TweetReposito
         return tweetRepository.save(tweetModel)
 
     }
-
-    private val logger = LoggerFactory.getLogger(javaClass)
 
     override fun deleteTweet(tweetId: Long): TweetModel {
         val isEmpty = tweetRepository.findById(tweetId).isEmpty
