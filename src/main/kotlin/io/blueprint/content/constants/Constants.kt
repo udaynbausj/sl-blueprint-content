@@ -5,5 +5,9 @@ class Constants {
         fun getTweetTextLengthLimit() : Int {
             return 140
         }
+
+        fun getTweetTopicName() : String {
+            return "Tweet"
+        }
     }
 }

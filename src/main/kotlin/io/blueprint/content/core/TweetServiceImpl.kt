@@ -1,11 +1,13 @@
 package io.blueprint.content.core
 
+import io.blueprint.content.constants.Constants
 import io.blueprint.content.dto.TweetDto
 import io.blueprint.content.enums.TweetStatusEnum
 import io.blueprint.content.exceptions.TweetNotFoundException
 import io.blueprint.content.exceptions.ValidationException
 import io.blueprint.content.models.TweetModel
 import io.blueprint.content.repositories.TweetRepository
+import io.blueprint.content.services.KafkaService
 import io.blueprint.content.services.TweetService
 import io.blueprint.content.utils.TweetUtils
 import org.slf4j.LoggerFactory
@@ -14,10 +16,8 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class TweetServiceImpl constructor(@Autowired val tweetRepository: TweetRepository) : TweetService {
-
-
-    private val logger = LoggerFactory.getLogger(javaClass)
+class TweetServiceImpl constructor(@Autowired val tweetRepository: TweetRepository,
+@Autowired val kafkaService: KafkaService ) : TweetService {
 
     override fun createTweet(tweetDto: TweetDto): TweetModel {
 
@@ -26,6 +26,7 @@ class TweetServiceImpl constructor(@Autowired val tweetRepository: TweetReposito
         }
 
         val tweetModel = buildTweetModel(tweetDto)
+        kafkaService.sendMessage(Constants.getTweetTopicName(),tweetModel)
         return tweetRepository.save(tweetModel)
 
     }
@@ -37,32 +38,9 @@ class TweetServiceImpl constructor(@Autowired val tweetRepository: TweetReposito
             throw TweetNotFoundException("Tweet with given id is not present")
         }
 
-        return tweetRepository.changeTweetStatus(tweetId)
-    }
-
-    fun findHashTags(text : String): List<String> {
-        var len = text.length
-        var i = 0
-        var iter = 0
-
-        val hashTagList = mutableListOf<String>()
-        var tempString = ""
-
-        while (len-- > 0) {
-            if(text[iter] == '#') {
-                i = iter
-                tempString += text[i]
-                i++
-            } else if(text[iter] == ' ') {
-                hashTagList.add(tempString)
-                tempString = ""
-            } else {
-                tempString += text[i]
-                i++
-            }
-            iter++
-        }
-        return hashTagList
+        val tweetModel = tweetRepository.changeTweetStatus(tweetId)
+        kafkaService.sendMessage(Constants.getTweetTopicName(),tweetModel)
+        return tweetModel
     }
 
 
