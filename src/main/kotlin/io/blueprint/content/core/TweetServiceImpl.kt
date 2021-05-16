@@ -53,6 +53,10 @@ class TweetServiceImpl constructor(@Autowired val tweetRepository: TweetReposito
         return result.get()
     }
 
+    override fun getPaginatedTweetsByUserId(userId: Long,limit: Int,offset: Int): List<TweetModel> {
+        return tweetRepository.getTweetModelsByUserId(userId,limit,offset)
+    }
+
     fun buildTweetModel(tweetDto: TweetDto) : TweetModel {
         val tweetModel = TweetModel()
         tweetModel.clientType = TweetUtils

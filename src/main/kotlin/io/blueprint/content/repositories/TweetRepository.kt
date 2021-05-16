@@ -14,4 +14,10 @@ interface TweetRepository : CrudRepository<TweetModel,Long> {
     @Query(value = "update tweet set status = 0 where id =:tweetId",nativeQuery = true)
     fun changeTweetStatus(@Param(value = "tweetId") tweetId : Long) : TweetModel
 
+    @Transactional(readOnly = true)
+    @Query(value = "select * from tweet where user_id =:userId limit =:limit offset =: offset",nativeQuery = true)
+    fun getTweetModelsByUserId(@Param(value = "userId") userId: Long,
+                                @Param(value = "limit") limit: Int,
+                                @Param(value = "offset") offset: Int): List<TweetModel>
+
 }
