@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional
 interface TweetRepository : CrudRepository<TweetModel,Long> {
 
     @Transactional(readOnly = false)
-    @Query(value = "update tweet set status = 0 where id =:tweetId")
+    @Query(value = "update tweet set status = 0 where id =:tweetId",nativeQuery = true)
     fun changeTweetStatus(@Param(value = "tweetId") tweetId : Long) : TweetModel
 
 }

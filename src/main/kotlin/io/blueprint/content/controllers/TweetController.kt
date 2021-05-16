@@ -25,4 +25,10 @@ class TweetController constructor(@Autowired val tweetService: TweetService) {
         return tweetService.deleteTweet(tweetId)
     }
 
+    @GetMapping("/{tweetId}")
+    fun getTweet(@PathVariable(name = "tweetId") tweetId: Long) : TweetModel {
+        logger.info("request to get tweet with id : {} received",tweetId)
+        return tweetService.getTweet(tweetId)
+    }
+
 }

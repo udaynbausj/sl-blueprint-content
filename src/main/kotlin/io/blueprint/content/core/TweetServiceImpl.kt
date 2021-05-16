@@ -10,7 +10,6 @@ import io.blueprint.content.repositories.TweetRepository
 import io.blueprint.content.services.KafkaService
 import io.blueprint.content.services.TweetService
 import io.blueprint.content.utils.TweetUtils
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.*
@@ -26,7 +25,7 @@ class TweetServiceImpl constructor(@Autowired val tweetRepository: TweetReposito
         }
 
         val tweetModel = buildTweetModel(tweetDto)
-        kafkaService.sendMessage(Constants.getTweetTopicName(),tweetModel)
+        kafkaService.sendMessage(Constants.getTweetTopicName(),tweetModel.toString())
         return tweetRepository.save(tweetModel)
 
     }
@@ -43,6 +42,16 @@ class TweetServiceImpl constructor(@Autowired val tweetRepository: TweetReposito
         return tweetModel
     }
 
+    override fun getTweet(tweetId: Long): TweetModel {
+
+        val result = tweetRepository.findById(tweetId)
+
+        if (result.isEmpty) {
+            throw TweetNotFoundException("Tweet with given id is not present")
+        }
+
+        return result.get()
+    }
 
     fun buildTweetModel(tweetDto: TweetDto) : TweetModel {
         val tweetModel = TweetModel()

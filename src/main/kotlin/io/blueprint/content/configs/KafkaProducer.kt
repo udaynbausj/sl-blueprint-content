@@ -19,8 +19,8 @@ class KafkaProducerConfig constructor(@Autowired val envProperties: EnvPropertie
 
         val options = mutableMapOf<String,Any>()
         options[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = envProperties.kafkaBootStrapServers
-        options[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class
-        options[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = StringSerializer::class
+        options[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java.canonicalName
+        options[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = StringSerializer::class.java.canonicalName
 
         return DefaultKafkaProducerFactory(options)
     }
